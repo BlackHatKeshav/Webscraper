@@ -6,32 +6,21 @@ import numpy as np
 def webscraper():
     BASE_URL = [
     'https://eezee.sg/product/honeywell-open-path-gd-short-range-system-02104-n-nsna-4a54149ad5',
-    'https://eezee.sg/product/honeywell-sensepoint-ht-flammable-sensor-atex-m20-2106b2310-c441162f10',
-    'https://eezee.sg/product/honeywell-med-range-transmitter-incl-conduit-atex-2104b2081-8f4e0aaca7',
-    'https://eezee.sg/product/honeywell-dust-barrier-2108b0259-61c87fab46',
     'https://eezee.sg/product/honeywell-receiver-std-version-short-range-atex-2104b2111-58010fddc0',
-    'https://eezee.sg/product/honeywell-transmitter-include-conduit-atex-iecex-2104b2071-0e1cbf81c2',
-    'https://eezee.sg/product/honeywell-oeld-smart-junction-box-oeldbxxxxxsdmax-bb9472f059',
-    'https://eezee.sg/product/honeywell-excel-test-filters-kit-2104n2999-f639c67088',
-    'https://eezee.sg/product/honeywell-sensepoint-hydrogen-sulphide-xcd-spxcdasmhx-14f488584f',
-    'https://eezee.sg/product/honeywell-los-sieger-alignment-kit-02104-n-4007-c1ac6a12d7',
-    'https://eezee.sg/product/honeywell-short-range-telescope-2104b2391-c6a4bb1446',
-    'https://eezee.sg/product/eaton-xenon-beacon-xb10d024fann2bn-8326c9d58e',
-    'https://eezee.sg/product/eaton-high-intensity-led-beacon-amber-ld15jacanbnn-a28f3a9a3e',
-    'https://eezee.sg/product/calgaz-8al-25ppm-h2s-balance-n2-a0202004-e022c5bbf0'
 ]
 
     df = pd.DataFrame(columns=['Description','Manufacturer','Part Number','Price'])
-    
+
     for b in BASE_URL:
         html = requests.get(b).text
         soup = BeautifulSoup(html, "html.parser")
     
         body = soup.find('body')
         price = body.find('span', class_='heading')
-        title = body.select('span.grey-base.caption')[0]
+        title = body.find('span', class_= 'jsx-514542 sub-heading grey-base')     
         table = body.find('table',class_='jsx-9035620f2783890c')
-        model,brand = table.find_all(class_='eezee-blue')
+        model = table.find_all('span', class_='eezee-blue')[0]
+        brand = table.find_all('span', class_='eezee-blue')[1]
         cleanprice = price.text.replace('S$',' ').lstrip()
         l = [title.text,brand.text,model.text,cleanprice] 
         my_series = pd.Series(data = l, index = [ 'Description','Manufacturer','Part Number','Price'])
